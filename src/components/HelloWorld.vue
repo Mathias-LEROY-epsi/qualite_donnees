@@ -7,10 +7,10 @@
       <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>. What's next?
     </h3>
 
-    <div v-if="data">
+    <!-- <div v-if="data">
       <h2>Data from API:</h2>
       <pre>{{ data }}</pre>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -23,7 +23,7 @@ const msg = "Hello, World!";
 const fetchData = async () => {
   try {
     const response = await axios.get(apiUrl);
-    console.log(response)
+    //console.log(response)
   } catch (error) {
     console.log(error);
   }
