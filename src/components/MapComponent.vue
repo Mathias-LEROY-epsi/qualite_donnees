@@ -8,7 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
 
 const apiUrlStops = "https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets/244400404_tan-arrets/records";
-const apiUrlLines = "https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets/244400404_tan-circuits/records?where=route_type%20LIKE%20%22Tram%22%20OR%20%22Bus%22&limit=3";
+const apiUrlLines = "https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets/244400404_tan-circuits/records?where=route_type%20LIKE%20%22Tram%22%20OR%20%22Bus%22&limit=100";
 
 export default {
 data() {
@@ -43,7 +43,7 @@ async created() {
 },
 methods: {
     initMap() {
-    this.map = L.map(this.$refs.map).setView([47.2184, -1.5536], 11);
+    this.map = L.map(this.$refs.map).setView([47.2184, -1.5536], 12);
 
     this.tramLines.forEach(tramLine => {
         const coordinates = tramLine.shape.geometry.coordinates;
@@ -60,15 +60,21 @@ methods: {
 
         L.polyline(latLngs, { color: `#${busLine.route_color}` }).addTo(this.map);
     });
-
+    
     this.busStops.forEach(stop => {
+          L.marker([stop.stop_coordinates.lat, stop.stop_coordinates.lon])
+            .bindPopup(stop.stop_name)
+            .addTo(this.map);
+        });
+
+    /*this.busStops.forEach(stop => {
         const marker = L.circleMarker([stop.stop_coordinates.lat, stop.stop_coordinates.lon], {
         radius: 5,
         fillColor: 'black',
         color: 'red',
         weight: 1,
         }).addTo(this.map);
-    });
+    });*/
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
