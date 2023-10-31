@@ -1,8 +1,8 @@
 <template>
     <div ref="map" class="map"></div>
-  </template>
+</template>
   
-<script>
+<script lang="ts">
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
