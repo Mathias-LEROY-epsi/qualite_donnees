@@ -77,8 +77,8 @@ methods: {
         const ACCES_HANDICAPE = stop.wheelchair_boarding
             ? 'Accès Handicapé&nbsp;:' + stop.wheelchair_boarding
             : 'Aucun accès handicapé'
-        const TYPE_LIGNE = stop.location_type == 1 ? 'Type de ligne&nbsp;: Bus' : 'Type de ligne&nbsp;: Tram'
-        const iconUrl = stop.location_type === 0 ? 'src/assets/tram.png' : 'src/assets/bus.png';
+        const TYPE_LIGNE = stop.location_type == 0 ? 'Type de ligne&nbsp;: Bus' : 'Type de ligne&nbsp;: Tram'
+        const iconUrl = stop.location_type === 0 ? 'src/assets/bus.png' : 'src/assets/tram.png';
         L.marker([stop.stop_coordinates.lat, stop.stop_coordinates.lon], {
             icon: L.icon({
             iconUrl,
