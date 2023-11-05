@@ -43,42 +43,62 @@ async created() {
 },
 methods: {
     initMap() {
-    this.map = L.map(this.$refs.map).setView([47.2184, -1.5536], 12);
+        this.map = L.map(this.$refs.map).setView([47.2184, -1.5536], 12)
+  
+        // Draw lines
+        this.tramLines.forEach((tramLine) => {
+          const coordinates = tramLine.shape.geometry.coordinates
+          //console.log(coordinates)
+          //console.log(tramLine.route_color, latLngs)
+          coordinates.forEach((coords) => {
+            coords.forEach((coord) => {
+              coord.reverse()
+            })
+            L.polyline(coords, { color: `#${tramLine.route_color}`, stroke: true }).addTo(this.map)
+          })
+        })
+  
+        // Draw lines
+        this.busLines.forEach((busLine) => {
+          const coordinates = busLine.shape.geometry.coordinates
+          //console.log(coordinates)
+          //console.log(busLine.route_color, latLngs)
+          coordinates.forEach((coords) => {
+            coords.forEach((coord) => {
+              coord.reverse()
+            })
+            L.polyline(coords, { color: `#${busLine.route_color}`, stroke: true }).addTo(this.map)
+          })
+        })
+        
 
-    this.tramLines.forEach(tramLine => {
-        const coordinates = tramLine.shape.geometry.coordinates;
-        console.log(coordinates)
-        const latLngs = coordinates.map(coordinate => L.latLng(coordinate[0][1], coordinate[0][0]));
+        this.busStops.forEach(stop => {
+        const NOM_ARRET = `Nom de l'arrêt&nbsp;: ${stop.stop_name}`
+        const ACCES_HANDICAPE = stop.wheelchair_boarding
+            ? 'Accès Handicapé&nbsp;:' + stop.wheelchair_boarding
+            : 'Aucun accès handicapé'
+        const TYPE_LIGNE = stop.location_type == 1 ? 'Type de ligne&nbsp;: Bus' : 'Type de ligne&nbsp;: Tram'
+        const iconUrl = stop.location_type === 0 ? 'src/assets/tram.png' : 'src/assets/bus.png';
+        L.marker([stop.stop_coordinates.lat, stop.stop_coordinates.lon], {
+            icon: L.icon({
+            iconUrl,
+            iconSize: [25, 25],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+            })
+  })
+  .bindPopup(`${TYPE_LIGNE}<br>${NOM_ARRET}<br>${ACCES_HANDICAPE}`)
+  .addTo(this.map);
+});
 
-        L.polyline(latLngs, { color: `#${tramLine.route_color}` }).addTo(this.map);
-    });
 
-    this.busLines.forEach(busLine => {
-        const coordinates = busLine.shape.geometry.coordinates;
-        const latLngs = coordinates.map(coordinate => L.latLng(coordinate[0][1], coordinate[0][0]));
-        console.log(typeof busLine.route_color);
 
-        L.polyline(latLngs, { color: `#${busLine.route_color}` }).addTo(this.map);
-    });
-    
-    this.busStops.forEach(stop => {
-          L.marker([stop.stop_coordinates.lat, stop.stop_coordinates.lon])
-            .bindPopup(stop.stop_name)
-            .addTo(this.map);
-        });
-
-    /*this.busStops.forEach(stop => {
-        const marker = L.circleMarker([stop.stop_coordinates.lat, stop.stop_coordinates.lon], {
-        radius: 5,
-        fillColor: 'black',
-        color: 'red',
-        weight: 1,
-        }).addTo(this.map);
-    });*/
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-    }).addTo(this.map);
+  
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          minZoom: 8
+        }).addTo(this.map)
     },
 },
 };
