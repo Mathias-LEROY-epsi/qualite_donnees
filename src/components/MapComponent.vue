@@ -79,7 +79,7 @@ methods: {
             : 'Aucun accès handicapé'
         const TYPE_LIGNE = stop.location_type == 0 ? 'Type de ligne&nbsp;: Bus' : 'Type de ligne&nbsp;: Tram'
         const iconUrl = stop.location_type === 0 ? 'src/assets/bus.png' : 'src/assets/tram.png';
-        L.marker([stop.stop_coordinates.lat, stop.stop_coordinates.lon], {
+        const marker = L.marker([stop.stop_coordinates.lat, stop.stop_coordinates.lon], {
             icon: L.icon({
             iconUrl,
             iconSize: [25, 25],
@@ -89,6 +89,13 @@ methods: {
             })
   })
   .bindPopup(`${TYPE_LIGNE}<br>${NOM_ARRET}<br>${ACCES_HANDICAPE}`)
+  
+  marker.on('click', () => {
+      this.map.flyTo([stop.stop_coordinates.lat, stop.stop_coordinates.lon], 16, {
+          duration: 1,
+          easeLinearity: 0.2,
+      });
+  })
   .addTo(this.map);
 });
 

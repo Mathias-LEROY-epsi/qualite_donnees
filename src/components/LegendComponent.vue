@@ -5,10 +5,10 @@
         <div class="col-6">
             <ul>
                 <li>
-                    <span class="legend-icon bus-icon"></span> Bus
+                    <span class="legend-icon"><img src="src/assets/bus.png"></span> Bus
                 </li>
                 <li>
-                    <span class="legend-icon tram-icon"></span> Tramway
+                    <span class="legend-icon"><img src="src/assets/tram.png"></span> Tramway
                 </li>
             </ul>
         </div>
@@ -47,18 +47,10 @@ width: 20px;
 height: 20px;
 margin-right: 5px;
 }
-
-.bus-icon {
-background-color: #4472c4;
-}
-
-.tram-icon {
-background-color: green;
-}
 .path-icon {
   background-color: black;
-  height: 0; /* Largeur de 0 pour créer une ligne droite */
-  border: 1px solid black; /* Ajoute une bordure pour créer la ligne */
+  height: 0;
+  border: 1px solid black;
 }
 
 ul {
