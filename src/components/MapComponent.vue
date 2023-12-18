@@ -15,15 +15,19 @@ const imagesIds = ['1354489271597701', 'src/assets/adrienne_bolland.jpg', '25611
 export default {
 data() {
     return {
+    //arrets: [],
     busStops: [],
     tanLines: [],
     busLines: [],
     tramLines: [],
-    map: null
+    map: null,
+    //nombreArrets: 0,
     };
 },
 async created() {
     try {
+    //await this.getStops();
+    //this.filterStopsByName();
     const stops = await axios.get(apiUrlStops);
     this.busStops = stops.data.results;
     const lines = await axios.get(apiUrlLines);
@@ -57,6 +61,43 @@ async created() {
     }
 },
 methods: {
+  /*async getStops() {
+      await axios
+        .get("https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets/244400404_tan-arrets/records")
+        .then((result) => {
+          this.nombreArrets = result.data.total_count;
+        });
+
+      for (let i = 0; i <= this.nombreArrets; i += 100) {
+        await axios
+          .get(`https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets/244400404_tan-arrets/records?offset=${i}&limit=100`)
+          .then((response) => {
+            let tab: any[] = response.data.results;
+            tab.forEach(e => this.arrets.push(e));
+          });
+      }
+    },
+
+    async filterStopsByName() {
+  const stopsMap = new Map();
+
+  this.arrets.forEach((arret) => {
+    const key = arret.stop_name;
+
+    if (!stopsMap.has(key)) {
+      stopsMap.set(key, [arret]);
+    } else {
+      const existingArrets = stopsMap.get(key);
+      const hasDifferentLocationType = existingArrets.every(existingArret => existingArret.location_type !== arret.location_type);
+
+      if (hasDifferentLocationType) {
+        existingArrets.push(arret);
+      }
+    }
+  });
+  this.arrets = Array.from(stopsMap.values()).flat();
+},*/
+
     initMap() {
       this.map = L.map(this.$refs.map).setView([47.2184, -1.5536], 12);
 
