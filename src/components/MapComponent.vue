@@ -88,31 +88,12 @@ export default {
 
     // Initialisation de la carte
     initMap() {
+      
       this.map = L.map(this.$refs.map).setView([47.2184, -1.5536], 12);
+      this.drawLines(this.tramLines);
+      this.drawLines(this.busLines);
 
-      // Dessin des lignes de tram
-      this.tramLines.forEach((tramLine) => {
-        const coordinates = tramLine.shape.geometry.coordinates;
-        coordinates.forEach((coords) => {
-          coords.forEach((coord) => {
-            coord.reverse();
-          });
-          L.polyline(coords, { color: `#${tramLine.route_color}`, stroke: true }).addTo(this.map);
-        });
-      });
-
-      // Dessin des lignes de bus
-      this.busLines.forEach((busLine) => {
-        const coordinates = busLine.shape.geometry.coordinates;
-        coordinates.forEach((coords) => {
-          coords.forEach((coord) => {
-            coord.reverse();
-          });
-          L.polyline(coords, { color: `#${busLine.route_color}`, stroke: true }).addTo(this.map);
-        });
-      });
-
-      // Ajout des marqueurs pour les arrêts de bus
+      // Ajout des marqueurs pour les arrêts de bus et tram
       this.stops.forEach((stop, index) => {
         const NOM_ARRET = `Nom de l'arrêt&nbsp;: ${stop.stop_name}`;
         const ACCES_HANDICAPE = stop.wheelchair_boarding
@@ -141,11 +122,6 @@ export default {
           })
           .addTo(this.map);
       });
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        minZoom: 8,
-      }).addTo(this.map);
     },
     // Ajouter les images sur certains arrets de bus
     async addStopsPhoto() {
@@ -170,6 +146,19 @@ export default {
           stop.imageUrl = null;
         }
       }
+    },
+    // Dessiner les circuits des lignes
+    drawLines(transportLines){
+      
+      transportLines.forEach((transportLine) => {
+      const coordinates = transportLine.shape.geometry.coordinates;
+      coordinates.forEach((coords) => {
+        coords.forEach((coord) => {
+          coord.reverse();
+        });
+        L.polyline(coords, { color: `#${transportLine.route_color}`, stroke: true }).addTo(this.map);
+      });
+    });
     }
   },
 };
