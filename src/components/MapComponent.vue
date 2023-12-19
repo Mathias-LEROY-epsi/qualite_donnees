@@ -7,22 +7,20 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
 
-const apiUrlStops =
-  "https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets/244400404_tan-arrets/records";
 const apiUrlLines =
   "https://data.nantesmetropole.fr/api/explore/v2.1/catalog/datasets/244400404_tan-circuits/records?where=route_type%20LIKE%20%22Tram%22%20OR%20%22Bus%22&limit=100";
 const token = 'MLY|6817262911684044|dd678e977d02b8ba219b398d2cd70fba';
 const imagesIds = [
-  '1354489271597701',
-  'src/assets/adrienne_bolland.jpg',
-  '2561170414179121',
-  '5620189844688123',
-  'src/assets/les_anges.jpg',
-  'src/assets/ampere.jpg',
-  'src/assets/aquitaine.jpg',
-  'src/assets/arbois.jpg',
-  'src/assets/auge.jpg',
-  'src/assets/barbiniere.jpg',
+  { name: 'Abel Durand', value: '1354489271597701' },
+  { name: 'Adrienne Bolland', value: 'src/assets/adrienne_bolland.jpg' },
+  { name: 'Aimé Delrue', value: '2561170414179121' },
+  { name: 'Avenue des Pins', value: '5620189844688123' },
+  { name: 'Les Anges', value: 'src/assets/les_anges.jpg' },
+  { name: 'Ampère', value: 'src/assets/ampere.jpg' },
+  { name: 'Aquitaine', value: 'src/assets/aquitaine.jpg' },
+  { name: 'Arbois', value: 'src/assets/arbois.jpg' },
+  { name: 'Augé', value: 'src/assets/auge.jpg' },
+  { name: 'Barbinière', value: 'src/assets/barbiniere.jpg' }
 ];
 
 export default {
@@ -53,8 +51,9 @@ export default {
           this.busLines.push(tanLine);
         }
       });
+      // Récupération des photos (via l'API Mapillary si possible)
+      await this.addStopsPhoto();
       // Initialisation de la carte
-      this.addStopsPhoto();
       this.initMap();
     } catch (error) {
       console.log(error);
@@ -70,7 +69,6 @@ export default {
         .then((result) => {
           this.nombreArrets = result.data.total_count;
         });
-        console.log(this.nombreArrets)
 
       try {
         for (let i = 0; i <= this.nombreArrets; i += 100) {
@@ -83,7 +81,6 @@ export default {
               tab.forEach((e) => this.stops.push(e));
             });
         }
-        console.log(this.stops)
       } catch (error) {
         console.log(error);
       }
@@ -124,7 +121,7 @@ export default {
         const TYPE_LIGNE =
           stop.location_type == 0 ? 'Type de ligne&nbsp;: Bus' : 'Type de ligne&nbsp;: Tram';
         const iconUrl = stop.location_type === 0 ? 'src/assets/bus.png' : 'src/assets/tram.png';
-        const marker = L.marker([stop.stop_coordinates.lat, stop.stop_coordinates.lon], {
+        L.marker([stop.stop_coordinates.lat, stop.stop_coordinates.lon], {
           icon: L.icon({
             iconUrl,
             iconSize: [25, 25],
@@ -134,7 +131,7 @@ export default {
           }),
         })
           .bindPopup(
-            `${TYPE_LIGNE}<br>${NOM_ARRET}<br>${ACCES_HANDICAPE}<br><img src="${stop.imageUrl}" alt="Image Mapillary" width="200" height="100"/>`
+            `${TYPE_LIGNE}<br>${NOM_ARRET}<br>${ACCES_HANDICAPE}<br><img src="${stop.imageUrl}" alt="Image Mapillary indisponible" width="200" height="100"/>`
           )
           .on('click', () => {
             this.map.flyTo([stop.stop_coordinates.lat, stop.stop_coordinates.lon], 16, {
@@ -152,26 +149,26 @@ export default {
     },
     // Ajouter les images sur certains arrets de bus
     async addStopsPhoto() {
-      let index = 0;
-
       for (const stop of this.stops) {
         try {
-          stop.imageId = imagesIds[index];
+          const matchingImage = imagesIds.find(image => image.name === stop.stop_name);
+          if (matchingImage) {
+            stop.imageId = matchingImage.value;
 
-          if (stop.imageId.substr(0, 3) !== 'src') {
-            console.log("enter " + stop.imageId);
-            const apiUrlImage = `https://graph.mapillary.com/${stop.imageId}?access_token=${token}&fields=thumb_256_url&client_id=6817262911684044`;
-            console.log(apiUrlImage)
-            const response = await axios.get(apiUrlImage);
-            stop.imageUrl = response.data.thumb_256_url;
+            if (stop.imageId && !stop.imageId.startsWith('src')) {
+              const apiUrlImage = `https://graph.mapillary.com/${stop.imageId}?access_token=${token}&fields=thumb_256_url&client_id=6817262911684044`;
+              const response = await axios.get(apiUrlImage);
+              stop.imageUrl = response.data.thumb_256_url;
+            } else {
+              stop.imageUrl = stop.imageId;
+            }
           } else {
-            stop.imageUrl = stop.imageId;
+            stop.imageUrl = null;
           }
         } catch (error) {
           console.log("Error processing stop:", error);
           stop.imageUrl = null;
         }
-        index = index + 1;
       }
     }
   },
