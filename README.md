@@ -1,4 +1,4 @@
-# Qualité Données
+# Qualitée Données
 
 This template should help get you started developing with Vue 3 in Vite.
 
@@ -37,4 +37,16 @@ npm run dev
 
 ```sh
 npm run build
+```
+
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
+npm run lint
+```
+
+### Format with [Prettier](https://prettier.io/)
+
+```sh
+npm run lint
 ```
